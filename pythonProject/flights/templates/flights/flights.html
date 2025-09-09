@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учет нарушений - ведущий специалист</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a6fc4, #0d4a85);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            min-width: 1300px;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #0d4a85;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f7ff;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-action {
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            color: black;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-save-report {
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+        }
+        .btn-add:hover {
+            background-color: #218838;
+        }
+        .btn-save-report:hover {
+            background-color: #138496;
+        }
+        .modal-content {
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+        }
+        .form-control {
+            border-radius: 4px;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            width: 100%;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .required::after {
+            content: "*";
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        /* Стили для боковой панели */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .sidebar.open {
+            right: 0;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0d4a85;
+        }
+        .sidebar-title {
+            color: #0d4a85;
+            margin: 0;
+        }
+        .close-sidebar {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        .report-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #0d4a85;
+        }
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .report-title {
+            font-weight: 600;
+            color: #0d4a85;
+            margin: 0;
+        }
+        .report-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .report-details {
+            color: #495057;
+        }
+        .report-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-load-report {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-delete-report {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+        .overlay.open {
+            display: block;
+        }
+        .toggle-sidebar {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            background: #0d4a85;
+            color: white;
+            border: none;
+            padding: 15px 5px;
+            border-radius: 8px 0 0 8px;
+            cursor: pointer;
+            z-index: 998;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-clipboard-list me-2"></i>Ведущий специалист</h1>
+            <p class="mb-0">Учет нарушений в работе аэропорта</p>
+        </div>
+
+        <div>
+            <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="fas fa-plus-circle"></i> Добавить запись
+            </button>
+            <button class="btn-save-report" id="saveReportBtn">
+                <i class="fas fa-save"></i> Сохранить отчет
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Аэропорт</th>
+                        <th>Рейс</th>
+                        <th>Направление</th>
+                        <th>Время прилета</th>
+                        <th>Время рейса</th>
+                        <th>Сектор-стоянка</th>
+                        <th>Время нарушения</th>
+                        <th>Служба</th>
+                        <th>Вид нарушения</th>
+                        <th>Детали нарушения</th>
+                        <th>Старший смены</th>
+                        <th>Выявлено оператором</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="violationsTable">
+                    <!-- Данные будут добавляться с помощью JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Система учета нарушений © 2025 ОАО "МАМ"</p>
+        </div>
+    </div>
+
+    <!-- Боковая панель для отчетов -->
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="reportsSidebar">
+        <div class="sidebar-header">
+            <h3 class="sidebar-title"><i class="fas fa-file-alt me-2"></i>Сохраненные отчеты</h3>
+            <button class="close-sidebar" id="closeSidebar">&times;</button>
+        </div>
+        <div id="reportsList">
+            <!-- Список отчетов будет добавляться здесь -->
+        </div>
+    </div>
+    <button class="toggle-sidebar" id="toggleSidebar">
+        <i class="fas fa-chevron-left"></i> Отчеты
+    </button>
+
+    <!-- Модальное окно для добавления/редактирования -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Добавление записи о нарушении</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="violationForm">
+                        <input type="hidden" id="editIndex" value="-1">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="date" class="required">Дата</label>
+                                    <input type="date" class="form-control" id="date" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="airport" class="required">Аэропорт</label>
+                                    <input type="text" class="form-control" id="airport" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="flight" class="required">Рейс</label>
+                                    <input type="text" class="form-control" id="flight" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="direction" class="required">Направление</label>
+                                    <input type="text" class="form-control" id="direction" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="arrivalTime">Время прилета</label>
+                                    <input type="time" class="form-control" id="arrivalTime">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="flightTime">Время рейса</label>
+                                    <input type="time" class="form-control" id="flightTime">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sector">Сектор-стоянка</label>
+                                    <input type="text" class="form-control" id="sector">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="violationTime" class="required">Время нарушения</label>
+                                    <input type="time" class="form-control" id="violationTime" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="service" class="required">Служба</label>
+                                    <select class="form-control" id="service" required>
+                                        <option value="">Выберите службу</option>
+                                        <option value="Техническая">Техническая служба</option>
+                                        <option value="Наземная">Наземная служба</option>
+                                        <option value="Багажная">Багажная служба</option>
+                                        <option value="Таможенная">Таможенная служба</option>
+                                        <option value="АХО">АХО</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="violationType" class="required">Вид нарушения</label>
+                                    <select class="form-control" id="violationType" required>
+                                        <option value="">Выберите вид нарушения</option>
+                                        <option value="Опоздание">Опоздание</option>
+                                        <option value="Неправильная документация">Неправильная документация</option>
+                                        <option value="Нарушение техники безопасности">Нарушение техники безопасности</option>
+                                        <option value="Неправильная стоянка">Неправильная стоянка</option>
+                                        <option value="Нарушение графика">Нарушение графика</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="violationDetails" class="required">Детали нарушения</label>
+                            <textarea class="form-control" id="violationDetails" rows="3" required></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="shiftSupervisor" class="required">Старший смены</label>
+                                    <input type="text" class="form-control" id="shiftSupervisor" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="detectedBy" class="required">Выявлено оператором</label>
+                                    <input type="text" class="form-control" id="detectedBy" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="saveViolation">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Хранилище данных
+        let violations = JSON.parse(localStorage.getItem('violations')) || [];
+        let reports = JSON.parse(localStorage.getItem('savedReports')) || [];
+
+        // Элементы DOM
+        const violationsTable = document.getElementById('violationsTable');
+        const violationForm = document.getElementById('violationForm');
+        const saveButton = document.getElementById('saveViolation');
+        const saveReportBtn = document.getElementById('saveReportBtn');
+        const addModal = new bootstrap.Modal(document.getElementById('addModal'));
+        const reportsSidebar = document.getElementById('reportsSidebar');
+        const overlay = document.getElementById('overlay');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const reportsList = document.getElementById('reportsList');
+
+        // Отображение данных в таблице
+        function renderTable() {
+            violationsTable.innerHTML = '';
+
+            if (violations.length === 0) {
+                violationsTable.innerHTML = `
+                    <tr>
+                        <td colspan="14" class="text-center py-4">
+                            <i class="fas fa-info-circle me-2"></i>Нет данных о нарушениях. Добавьте первую запись.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            violations.forEach((violation, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${violation.date}</td>
+                    <td>${violation.airport}</td>
+                    <td>${violation.flight}</td>
+                    <td>${violation.direction}</td>
+                    <td>${violation.arrivalTime || '-'}</td>
+                    <td>${violation.flightTime || '-'}</td>
+                    <td>${violation.sector || '-'}</td>
+                    <td>${violation.violationTime}</td>
+                    <td>${violation.service}</td>
+                    <td>${violation.violationType}</td>
+                    <td>${violation.violationDetails}</td>
+                    <td>${violation.shiftSupervisor}</td>
+                    <td>${violation.detectedBy}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-action btn-edit" onclick="editViolation(${index})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-delete" onclick="deleteViolation(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                violationsTable.appendChild(row);
+            });
+        }
+
+        // Отображение списка отчетов
+        function renderReports() {
+            reportsList.innerHTML = '';
+
+            if (reports.length === 0) {
+                reportsList.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-folder-open fa-3x mb-3 text-muted"></i>
+                        <p>Нет сохраненных отчетов</p>
+                    </div>
+                `;
+                return;
+            }
+
+            reports.forEach((report, index) => {
+                const reportItem = document.createElement('div');
+                reportItem.className = 'report-item';
+                reportItem.innerHTML = `
+                    <div class="report-header">
+                        <h4 class="report-title">Отчет от ${report.date}</h4>
+                        <span class="report-date">${report.time}</span>
+                    </div>
+                    <div class="report-details">
+                        <p><strong>Количество записей:</strong> ${report.data.length}</p>
+                        <p><strong>Аэропорты:</strong> ${[...new Set(report.data.map(item => item.airport))].join(', ')}</p>
+                    </div>
+                    <div class="report-actions">
+                        <button class="btn-load-report" onclick="loadReport(${index})">
+                            <i class="fas fa-download"></i> Загрузить
+                        </button>
+                        <button class="btn-delete-report" onclick="deleteReport(${index})">
+                            <i class="fas fa-trash"></i> Удалить
+                        </button>
+                    </div>
+                `;
+                reportsList.appendChild(reportItem);
+            });
+        }
+
+        // Сохранение нарушения
+        saveButton.addEventListener('click', function() {
+            if (!violationForm.checkValidity()) {
+                violationForm.reportValidity();
+                return;
+            }
+
+            const violation = {
+                date: document.getElementById('date').value,
+                airport: document.getElementById('airport').value,
+                flight: document.getElementById('flight').value,
+                direction: document.getElementById('direction').value,
+                arrivalTime: document.getElementById('arrivalTime').value,
+                flightTime: document.getElementById('flightTime').value,
+                sector: document.getElementById('sector').value,
+                violationTime: document.getElementById('violationTime').value,
+                service: document.getElementById('service').value,
+                violationType: document.getElementById('violationType').value,
+                violationDetails: document.getElementById('violationDetails').value,
+                shiftSupervisor: document.getElementById('shiftSupervisor').value,
+                detectedBy: document.getElementById('detectedBy').value
+            };
+
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+
+            if (editIndex >= 0) {
+                violations[editIndex] = violation;
+            } else {
+                violations.push(violation);
+            }
+
+            localStorage.setItem('violations', JSON.stringify(violations));
+            renderTable();
+            addModal.hide();
+            violationForm.reset();
+            document.getElementById('editIndex').value = '-1';
+        });
+
+        // Сохранение отчета
+        saveReportBtn.addEventListener('click', function() {
+            if (violations.length === 0) {
+                alert('Нет данных для сохранения отчета!');
+                return;
+            }
+
+            const now = new Date();
+            const report = {
+                id: Date.now(),
+                date: now.toLocaleDateString('ru-RU'),
+                time: now.toLocaleTimeString('ru-RU'),
+                data: [...violations] // Копируем массив нарушений
+            };
+
+            reports.unshift(report); // Добавляем в начало списка
+            localStorage.setItem('savedReports', JSON.stringify(reports));
+            renderReports();
+
+            alert(`Отчет успешно сохранен!\nДата: ${report.date}\nВремя: ${report.time}\nЗаписей: ${report.data.length}`);
+        });
+
+        // Загрузка отчета
+        window.loadReport = function(index) {
+            if (confirm('Загрузить этот отчет? Текущие данные будут заменены.')) {
+                violations = [...reports[index].data]; // Копируем данные отчета
+                localStorage.setItem('violations', JSON.stringify(violations));
+                renderTable();
+                closeSidebarMenu();
+                alert('Отчет успешно загружен!');
+            }
+        };
+
+        // Удаление отчета
+        window.deleteReport = function(index) {
+            if (confirm('Удалить этот отчет?')) {
+                reports.splice(index, 1);
+                localStorage.setItem('savedReports', JSON.stringify(reports));
+                renderReports();
+            }
+        };
+
+        // Редактирование нарушения
+        window.editViolation = function(index) {
+            const violation = violations[index];
+
+            document.getElementById('editIndex').value = index;
+            document.getElementById('date').value = violation.date;
+            document.getElementById('airport').value = violation.airport;
+            document.getElementById('flight').value = violation.flight;
+            document.getElementById('direction').value = violation.direction;
+            document.getElementById('arrivalTime').value = violation.arrivalTime || '';
+            document.getElementById('flightTime').value = violation.flightTime || '';
+            document.getElementById('sector').value = violation.sector || '';
+            document.getElementById('violationTime').value = violation.violationTime;
+            document.getElementById('service').value = violation.service;
+            document.getElementById('violationType').value = violation.violationType;
+            document.getElementById('violationDetails').value = violation.violationDetails;
+            document.getElementById('shiftSupervisor').value = violation.shiftSupervisor;
+            document.getElementById('detectedBy').value = violation.detectedBy;
+
+            document.getElementById('addModalLabel').textContent = 'Редактирование записи о нарушении';
+            addModal.show();
+        };
+
+        // Удаление нарушения
+        window.deleteViolation = function(index) {
+            if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+                violations.splice(index, 1);
+                localStorage.setItem('violations', JSON.stringify(violations));
+                renderTable();
+            }
+        };
+
+        // Управление боковой панелью
+        toggleSidebar.addEventListener('click', function() {
+            reportsSidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        });
+
+        closeSidebar.addEventListener('click', closeSidebarMenu);
+        overlay.addEventListener('click', closeSidebarMenu);
+
+        function closeSidebarMenu() {
+            reportsSidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        }
+
+        // Сброс формы при закрытии модального окна
+        document.getElementById('addModal').addEventListener('hidden.bs.modal', function () {
+            violationForm.reset();
+            document.getElementById('editIndex').value = '-1';
+            document.getElementById('addModalLabel').textContent = 'Добавление записи о нарушении';
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            renderReports();
+        });
+    </script>
+</body>
+</html>
