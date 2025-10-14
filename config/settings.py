@@ -39,15 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'inspector',
+    'inspector.apps.InspectorConfig',
     'rest_framework',
     'leadspec',
-    'service',
+    'slujba',
     'rukap',
-
-
-
 ]
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,9 +133,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
-LOGIN_REDIRECT_URL = 'home'  # Будет переопределено в LoginUser
-LOGIN_URL = 'users:login'
-LOGOUT_REDIRECT_URL = 'users:login'
+LOGIN_REDIRECT_URL = "/after-login/"
+LOGOUT_REDIRECT_URL = "/users/login/"
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Asia/Bishkek'

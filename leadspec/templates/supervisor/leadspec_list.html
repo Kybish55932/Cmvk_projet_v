@@ -2,19 +2,31 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Панель инспектора</title>
-  <link rel="stylesheet" href="{% static 'supervisor/css/style.css' %}">
+  <meta charset="UTF-8" />
+  <title>Панель старшей смены</title>
+  <link rel="stylesheet" href="{% static 'supervisor/css/style.css' %}" />
 </head>
 <body data-username="{{ request.user.get_full_name|default:request.user.username }}">
-  <!-- Навбар -->
+  <!-- NAVBAR -->
   <div class="navbar">
-    <div class="brand">Панель старшей смены</div>
-    <div>
-      Добро пожаловать
+    <div class="left-side">
+      <button class="menu-toggle" id="menuToggle" aria-label="Меню">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+      <div class="brand">Панель старшей смены</div>
+    </div>
+    <div class="right-side">
+      Добро пожаловать, {{ request.user.get_full_name|default:request.user.username }}
       <button class="btn">Выйти</button>
     </div>
   </div>
+
+  <!-- SIDEBAR (только две ссылки) -->
+  <aside class="sidebar" id="sidebar">
+    <a href="/supervisor/">Моя страница</a>
+    <a href="/answers/">Ответы</a>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
   <!-- Фильтры -->
   <div class="filters">
@@ -22,51 +34,45 @@
     <div class="row">
       <div>
         <label>Дата от</label>
-        <input type="date" id="dateFrom">
+        <input type="date" id="dateFrom" />
       </div>
       <div>
         <label>Дата до</label>
-        <input type="date" id="dateTo">
+        <input type="date" id="dateTo" />
+      </div>
+      <div>
+        <label>Аэропорт</label>
+        <select id="airport" multiple></select>
       </div>
       <div>
         <label>Служба</label>
-        <select id="service">
-          <option value="">Все</option>
-          <option value="САБ">САБ</option>
-          <option value="САСПОП">САСПОП</option>
-          <option value="СПОиАТ">СПОиАТ</option>
-        </select>
+        <select id="service" multiple></select>
       </div>
       <div>
         <label>Кем выявлено</label>
-        <select id="tehnick">
-          <option value="">Все</option>
-          <option value="Осмонов Нурсултан">Осмонов Нурсултан</option>
-          <option value="Касымова Рима">Касымова Рима</option>
-        </select>
+        <!-- заполнится списком + «Другие» до инициализации мультиселекта -->
+        <select id="tehnick" multiple></select>
       </div>
       <div>
         <label>Вид нарушения</label>
-        <select id="violationFilter">
-          <option value="">Все</option>
+        <select id="violationFilter" multiple>
           <option value="Без пропуска">Без пропуска</option>
           <option value="Опоздание">Опоздание</option>
           <option value="Форма одежды">Форма одежды</option>
         </select>
       </div>
-      <div class="apply-btn">
+      <div class="buttons-group">
         <button class="btn btn-success" id="applyFiltersBtn">Применить</button>
-      </div>
-      <div>
-        <button class="btn" id="resetFiltersBtn">Сбросить фильтры</button>
+        <button class="btn" id="resetFiltersBtn">Сбросить</button>
       </div>
     </div>
   </div>
 
-  <!-- Кнопки -->
-  <div class="buttons">
-    <button class="btn btn-success">➕ Добавить нарушение</button>
-  </div>
+<div class="buttons">
+  <button class="btn btn-success" id="addViolationBtn">➕ Добавить нарушение</button>
+  <button class="btn" id="exportExcelBtn">📊 Экспорт в Excel</button>
+</div>
+
 
   <!-- Таблица -->
   <div class="table-container">
@@ -86,37 +92,14 @@
           <th>Описание</th>
           <th>Старший смены</th>
           <th>Кем выявлено</th>
+          <th>Смена</th>
           <th>Действия</th>
         </tr>
       </thead>
-      <tbody>
-        {% for v in violations %}
-        <tr data-id="{{ v.id }}">
-          <td>{{ v.date }}</td>
-          <td>{{ v.airport }}</td>
-          <td>{{ v.flight }}</td>
-          <td>{{ v.direction }}</td>
-          <td>{{ v.type }}</td>
-          <td>{{ v.time_start }} - {{ v.time_end }}</td>
-          <td>{{ v.sector }}</td>
-          <td>{{ v.violation_start }} - {{ v.violation_end }}</td>
-          <td>{{ v.service }}</td>
-          <td>{{ v.violation }}</td>
-          <td>{{ v.description }}</td>
-          <td>{{ v.supervisor }}</td>
-          <td>{{ v.inspector }}</td>
-          <td class="action-btns">
-            <button class="edit">✏️</button>
-            <button class="delete">🗑️</button>
-          </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="14">Нет данных</td></tr>
-        {% endfor %}
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
   <script src="{% static 'supervisor/js/script.js' %}"></script>
 </body>
 </html>
