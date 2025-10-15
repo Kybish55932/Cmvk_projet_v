@@ -19,6 +19,7 @@ urlpatterns = [
     path("choices/", views.choices, name="choices"),
     path("database/", views.database_page, name="database_page"),
     path("weekly-report/", views.weekly_report_page, name="weekly_report"),
+    path("weekly-report/agree/", views.agree_week, name="weekly_report_agree"),
     path("api/weekly_violations/", views.api_weekly_violations, name="api_weekly_violations"),
     path("send_for_approval/<int:id>/", views.send_for_approval, name="send_for_approval"),
     path("send_week/", views.send_week, name="send_week"),

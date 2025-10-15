@@ -224,6 +224,33 @@ def send_week(request):
     .update(status="sent"))
     return JsonResponse({"success": True, "updated": updated})
 
+@csrf_exempt
+@login_required
+@require_http_methods(["POST"])
+def agree_week(request):
+    """Перевод всех approved нарушений недели в статус agreed."""
+    payload = _payload(request)
+    start = payload.get("start")
+    end = payload.get("end")
+
+    if not start or not end:
+        return JsonResponse({"error": "Требуются даты недели."}, status=400)
+
+    try:
+        start_date = datetime.strptime(start, "%Y-%m-%d").date()
+        end_date = datetime.strptime(end, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Неверный формат даты."}, status=400)
+
+    if start_date > end_date:
+        return JsonResponse({"error": "Дата начала позже даты окончания."}, status=400)
+
+    updated = (Inspector.objects
+               .filter(status="approved", date__range=(start_date, end_date))
+               .update(status="agreed"))
+
+    return JsonResponse({"updated": updated})
+
 def _to_codes(val):
     """Принимает list/строку вида: 'АС', 'АС, МСЧ', '["АС","МСЧ"]', '[АС, МСЧ]' → ['АС','МСЧ']"""
     if isinstance(val, list):
