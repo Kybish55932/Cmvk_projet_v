@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-
-class LeadspecConfig(AppConfig):
+class ViewlistConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'viewlist'

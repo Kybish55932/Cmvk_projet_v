@@ -17,4 +17,5 @@ urlpatterns = [
     path("supervisor/", include("leadspec.urls")),
     path("rukap/", include("rukap.urls")),
     path("slujba/", include("slujba.urls")),
+    path("viewlist/", include(("viewlist.urls", "viewlist"), namespace="viewlist")),
 ]

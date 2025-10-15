@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'leadspec',
     'slujba',
     'rukap',
+    'viewlist.apps.ViewlistConfig',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
