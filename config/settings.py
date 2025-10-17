@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'leadspec',
     'slujba',
     'rukap',
+    # 'accountant.apps.AccountantConfig',
+    'accountant.apps.AccountantConfig',
     'viewlist.apps.ViewlistConfig',
 ]
 

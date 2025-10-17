@@ -16,3 +16,6 @@ inspector_required = group_required(["inspector", ])
 
 # ✅ Для старшей смены
 supervisor_required = group_required(["supervisor", ])
+
+# ✅ Для бухгалтеров
+accountant_required = group_required(["accountant", ])

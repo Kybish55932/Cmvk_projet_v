@@ -8,5 +8,7 @@ def redirect_based_on_group(request):
         return redirect("/inspector/inspector/")
     elif user.groups.filter(name="supervisor").exists():
         return redirect("/supervisor/")
+    elif user.groups.filter(name="accountant").exists():
+        return redirect("/accountant/")
     else:
         return redirect("/")  # например, главная страница

@@ -30,6 +30,9 @@ def after_login_redirect(request):
     # если это старшая смена (supervisor)
     elif user.groups.filter(name="supervisor").exists():
         return redirect("/supervisor/")
+        # если это бухгалтер
+    elif user.groups.filter(name="accountant").exists():
+        return redirect("/accountant/")
 
     # если админ или другой тип
     return redirect("/admin/")
